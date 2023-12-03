@@ -18,7 +18,7 @@ public class CarritoDeCompras_Ferreteria extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Controller.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("VentanaProductos.fxml"));
         
         Scene scene = new Scene(root);
         
