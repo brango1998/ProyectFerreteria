@@ -364,7 +364,7 @@ public class ControllerController implements Initializable {
                 // Mostrar un mensaje de error en caso de excepción
                 Alert alerta = new Alert(Alert.AlertType.ERROR);
                 alerta.setHeaderText("Error al eliminar");
-                alerta.setContentText("Se produjo un error al eliminar el elemento del archivo.");
+                alerta.setContentText("Se produjo un error al eliminar el elemento del archivoo.");
                 alerta.showAndWait();
             }
         }
