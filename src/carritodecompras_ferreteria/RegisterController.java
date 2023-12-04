@@ -27,6 +27,7 @@ import javafx.stage.Stage;
  * FXML Controller class
  *
  * @author neon
+ * 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
  */
 public class RegisterController implements Initializable {
 
