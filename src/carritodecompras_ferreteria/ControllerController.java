@@ -481,5 +481,23 @@ public class ControllerController implements Initializable {
                 + "\nUnidades: " + menor.getUnidades());
         alerta.showAndWait();
     }
+    
+    @FXML
+    private void listado(ActionEvent event) {
+        StringBuilder productosDisponibles = new StringBuilder("Productos disponibles:\n\n");
+
+        for (nodo producto : nodos) {
+            productosDisponibles.append("Nombre: ").append(producto.getNom()).append("\n");
+            productosDisponibles.append("Marca: ").append(producto.getMarca()).append("\n");
+            productosDisponibles.append("Precio: ").append(producto.getPrecio()).append("\n");
+            productosDisponibles.append("Unidades disponibles: ").append(producto.getUnidades()).append("\n\n");
+        }
+
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Listado de productos disponibles");
+        alerta.setHeaderText(null);
+        alerta.setContentText(productosDisponibles.toString());
+        alerta.showAndWait();
+    }
 
 }
