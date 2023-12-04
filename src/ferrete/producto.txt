@@ -1,0 +1,16 @@
+Martillo,1201203,Stanley,70000.0,19
+Pinzas,2345678,Knipex,35.0,25
+Destornilladores,3456789,Wiha,15.75,40
+Tablones de madera,4567890,Georgia Pacific,50.0,15
+Focos,5678901,Osram,10.25,50
+Sierras (serruchos),6789012,Irwin Tools,27.5,20
+Martillo de Ingeniero,7890123,Stanley,85000.0,8
+Pinzas de Presión,8901234,Knipex,45.0,20
+Destornilladores de Precisión,9012345,Wiha,20.5,30
+Tablones de Roble,1234567,Georgia Pacific,70.0,12
+Focos LED Inteligentes,2345678,Osram,15.75,40
+Martillo de Carpintero,3456789,DeWalt,75000.0,10
+Pinzas de Electricista,4567890,Klein Tools,30.0,18
+Destornilladores de Mango Aislante,5678901,Stanley,18.25,25
+Tablones de Pino,6789012,Weyerhaeuser,45.0,15
+Focos Regulables,7890123,Philips,12.5,35

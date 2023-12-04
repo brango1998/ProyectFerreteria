@@ -24,7 +24,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -194,134 +193,6 @@ public class ControllerController implements Initializable {
     }
 
     @FXML
-    private void comprar(ActionEvent event) {
-        // Obtener el zapato seleccionado en la tabla
-        nodo fe = tabla.getSelectionModel().getSelectedItem();
-
-        if (fe == null) {
-            // Mostrar mensaje de advertencia si no se ha seleccionado ningún zapato
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setHeaderText("No se ha seleccionado ningún elemento");
-            alerta.setContentText("Seleccione un elemento para comprar.");
-            alerta.showAndWait();
-            return;
-        }
-
-        // Crear un diálogo para obtener la cantidad de unidades a comprar
-        TextInputDialog dialogo = new TextInputDialog("");
-        dialogo.setTitle("Cantidad a comprar");
-        dialogo.setHeaderText(null);
-        dialogo.setContentText("Ingrese la cantidad a comprar, debe ser menor a " + fe.getUnidades() + "\n");
-        Optional<String> cantidad = dialogo.showAndWait();
-
-        if (!cantidad.isPresent()) {
-            return; // El usuario ha cerrado el diálogo
-        } else if (!cantidad.get().matches("^[1-9]\\d*$")) {
-            // La entrada no es un número entero positivo
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setHeaderText("Entrada inválida");
-            alerta.setContentText("La cantidad de unidades debe ser un número entero positivo.");
-            alerta.showAndWait();
-            return;
-        }
-
-        int cantidadComprar = Integer.parseInt(cantidad.get());
-
-        if (cantidadComprar > fe.getUnidades()) {
-            // Mostrar mensaje de advertencia si la cantidad de unidades no está disponible
-            Alert ale = new Alert(Alert.AlertType.INFORMATION);
-            ale.setHeaderText("Información");
-            ale.setContentText("La cantidad de unidades no está disponible");
-            ale.showAndWait();
-            return;
-        }
-
-        // Actualizar la cantidad de unidades en el objeto Nodo
-        fe.setUnidades(fe.getUnidades() - cantidadComprar);
-
-        // Abre el archivo para lectura y escritura
-        String archivoRuta = "src/ferrete/producto.txt";
-        File archivo = new File(archivoRuta);
-
-        try {
-            // Crear un ObservableList para almacenar las líneas del archivo
-            ObservableList<String> lineas = FXCollections.observableArrayList();
-
-            // Leer todo el contenido del archivo y almacenarlo en el ObservableList
-            Scanner scanner = new Scanner(archivo);
-            while (scanner.hasNextLine()) {
-                lineas.add(scanner.nextLine());
-            }
-            scanner.close();
-
-            // Encuentra y actualiza el elemento correspondiente en el ObservableList
-            for (int i = 0; i < lineas.size(); i++) {
-                String[] elementos = lineas.get(i).split(",");
-                if (elementos.length >= 5 && elementos[0].equals(fe.getId())) {
-                    int unidades = Integer.parseInt(elementos[4]);
-                    unidades -= cantidadComprar;
-                    elementos[4] = Integer.toString(unidades);
-                    lineas.set(i, String.join(",", elementos));
-                    break;
-                }
-            }
-
-            // Abre el archivo nuevamente para escritura
-            FileWriter fileWriter = new FileWriter(archivoRuta);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-            // Escribe todas las líneas actualizadas en el archivo
-            for (String linea : lineas) {
-                bufferedWriter.write(linea);
-                bufferedWriter.newLine();
-            }
-
-            // Cierra el BufferedWriter
-            bufferedWriter.close();
-
-            // Mostrar información de la compra y confirmar el pago
-            Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
-            alerta.setHeaderText("¿Deseas comprar el elemento " + fe.getNom() + "?");
-            alerta.setContentText("El precio del zapato es: " + fe.getPrecio() + "\nEl total a pagar es: " + (fe.getPrecio() * cantidadComprar));
-            Optional<ButtonType> result = alerta.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                // Pago realizado correctamente
-                Alert notify = new Alert(Alert.AlertType.INFORMATION);
-                notify.setTitle("¡Proceso Exitoso!");
-                notify.setHeaderText("Cargando información...");
-                notify.setContentText("Pago Realizado Correctamente!");
-                notify.show();
-                historial.add("Compra: " + fe.getNom() + ", Cantidad: " + cantidadComprar + ", Total: $" + (fe.getPrecio() * cantidadComprar));
-            }
-
-            if (fe.getUnidades() <= 0) {
-                // Si no quedan unidades disponibles, eliminar el automóvil de la lista
-                nodos.remove(fe);
-
-                // Actualizar la tabla de zapatos
-                tabla.setItems(null);
-                tabla.layout();
-                tabla.setItems(FXCollections.observableList(nodos));
-
-                // Mostrar mensaje de información si no quedan unidades disponibles
-                Alert ale = new Alert(Alert.AlertType.INFORMATION);
-                ale.setHeaderText("Información");
-                ale.setContentText("Ya no quedan unidades disponibles");
-                ale.showAndWait();
-            }
-
-            // Actualizar la tabla
-            tabla.refresh();
-        } catch (IOException e) {
-            // Mostrar un mensaje de error en caso de excepción
-            Alert alerta = new Alert(Alert.AlertType.ERROR);
-            alerta.setHeaderText("Error al actualizar el archivo");
-            alerta.setContentText("Se produjo un error al actualizar el archivo.");
-            alerta.showAndWait();
-        }
-    }
-
-    @FXML
     private void mostrar(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         openWindow("VentanaProductos.fxml", stage);
@@ -396,13 +267,13 @@ public class ControllerController implements Initializable {
         TextInputDialog dialogo = new TextInputDialog("");
         dialogo.setTitle("Buscar producto");
         dialogo.setHeaderText(null);
-        dialogo.setContentText("Ingrese el nombre del producto a buscar:");
+        dialogo.setContentText("Ingrese el id del producto a buscar:");
 
-        Optional<String> nombreProducto = dialogo.showAndWait();
+        Optional<String> id = dialogo.showAndWait();
 
-        if (nombreProducto.isPresent()) {
+        if (id.isPresent()) {
             for (nodo producto : nodos) {
-                if (producto.getNom().equalsIgnoreCase(nombreProducto.get())) {
+                if (producto.getId().equalsIgnoreCase(id.get())) {
                     Alert alerta = new Alert(Alert.AlertType.INFORMATION);
                     alerta.setTitle("Detalles del producto");
                     alerta.setHeaderText("Detalles de " + producto.getNom());
@@ -425,17 +296,17 @@ public class ControllerController implements Initializable {
         TextInputDialog dialogo = new TextInputDialog("");
         dialogo.setTitle("Cambiar unidades");
         dialogo.setHeaderText(null);
-        dialogo.setContentText("Ingrese el nombre del producto para cambiar unidades:");
+        dialogo.setContentText("Ingrese el id del producto para cambiar unidades:");
 
-        Optional<String> nombreProducto = dialogo.showAndWait();
+        Optional<String> id = dialogo.showAndWait();
 
-        if (nombreProducto.isPresent()) {
+        if (id.isPresent()) {
             for (nodo producto : nodos) {
-                if (producto.getNom().equalsIgnoreCase(nombreProducto.get())) {
+                if (producto.getId().equalsIgnoreCase(id.get())) {
                     TextInputDialog unidadesDialog = new TextInputDialog("");
                     unidadesDialog.setTitle("Modificar unidades");
                     unidadesDialog.setHeaderText(null);
-                    unidadesDialog.setContentText("Unidades actuales: " + producto.getUnidades() + ". Ingrese la nueva cantidad:");
+                    unidadesDialog.setContentText("Unidades actuales: " + producto.getUnidades() + ".  Ingrese la nueva cantidad:");
 
                     Optional<String> unidadesNuevas = unidadesDialog.showAndWait();
 
@@ -445,6 +316,7 @@ public class ControllerController implements Initializable {
 
                         // Actualizar el archivo con las nuevas unidades
                         guardarActualizacionArchivo(producto);
+                        tabla.refresh();
                         return;
                     }
                 }
@@ -456,7 +328,7 @@ public class ControllerController implements Initializable {
             alerta.showAndWait();
         }
     }
-    
+
     @FXML
     private void mayormenor(ActionEvent event) {
         nodo mayor = null;
@@ -481,7 +353,7 @@ public class ControllerController implements Initializable {
                 + "\nUnidades: " + menor.getUnidades());
         alerta.showAndWait();
     }
-    
+
     @FXML
     private void listado(ActionEvent event) {
         StringBuilder productosDisponibles = new StringBuilder("Productos disponibles:\n\n");
@@ -499,7 +371,7 @@ public class ControllerController implements Initializable {
         alerta.setContentText(productosDisponibles.toString());
         alerta.showAndWait();
     }
-    
+
     private void guardarActualizacionArchivo(nodo producto) {
         String archivoRuta = "src/ferrete/producto.txt";
 
@@ -540,4 +412,104 @@ public class ControllerController implements Initializable {
         }
     }
 
+    @FXML
+    private void comprar(ActionEvent event) { // Obtener el elemento seleccionado en la tabla
+        nodo elementoSeleccionado = tabla.getSelectionModel().getSelectedItem();
+
+        if (elementoSeleccionado == null) {
+            // Mostrar mensaje de advertencia si no se ha seleccionado ningún elemento
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setHeaderText("Ningún elemento seleccionado");
+            alerta.setContentText("Seleccione un elemento para comprar.");
+            alerta.showAndWait();
+            return;
+        }
+
+        // Crear un diálogo para obtener la cantidad de unidades a comprar
+        TextInputDialog dialogo = new TextInputDialog("");
+        dialogo.setTitle("Cantidad a comprar");
+        dialogo.setHeaderText(null);
+        dialogo.setContentText("Ingrese la cantidad a comprar, debe ser menor o igual a " + elementoSeleccionado.getUnidades() + ":");
+        Optional<String> cantidad = dialogo.showAndWait();
+
+        if (!cantidad.isPresent()) {
+            return; // El usuario ha cerrado el diálogo
+        } else if (!cantidad.get().matches("^\\d+$")) {
+            // La entrada no es un número entero positivo
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setHeaderText("Entrada inválida");
+            alerta.setContentText("La cantidad de unidades debe ser un número entero positivo.");
+            alerta.showAndWait();
+            return;
+        }
+
+        int cantidadComprar = Integer.parseInt(cantidad.get());
+
+        if (cantidadComprar > elementoSeleccionado.getUnidades()) {
+            // Mostrar mensaje de advertencia si la cantidad de unidades no está disponible
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setHeaderText("Cantidad no disponible");
+            alerta.setContentText("La cantidad de unidades seleccionada no está disponible.");
+            alerta.showAndWait();
+            return;
+        }
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setHeaderText("Compra exitosa!");
+            alerta.setContentText("Usted a comprado el elemento: "+elementoSeleccionado.getNom()+"\n"
+            +"Tiene un precio de: "+elementoSeleccionado.getPrecio()+"\n"+
+                    "El total a pagar es de: "+elementoSeleccionado.getPrecio()*cantidadComprar);
+            alerta.showAndWait();
+        // Actualizar la cantidad de unidades en el objeto Nodo
+        elementoSeleccionado.setUnidades(elementoSeleccionado.getUnidades() - cantidadComprar);
+
+        // Actualizar la tabla con la nueva información
+        tabla.refresh();
+
+        // Actualizar el archivo con la información actualizada
+        actualizarArchivo(elementoSeleccionado,  cantidadComprar);
+    }
+
+    private void actualizarArchivo(nodo elemento, int cantidadComprar) {
+        String archivoRuta = "src/ferrete/producto.txt";
+
+        try {
+            // Crear un StringBuilder para almacenar el contenido actualizado del archivo
+            StringBuilder nuevoContenido = new StringBuilder();
+
+            // Abrir el archivo y leer su contenido
+            File archivo = new File(archivoRuta);
+            Scanner scanner = new Scanner(archivo);
+
+            while (scanner.hasNextLine()) {
+                String linea = scanner.nextLine();
+                String[] elementos = linea.split(",");
+
+                // Si el ID del elemento coincide, actualizar la cantidad de unidades en el archivo
+                if (elementos.length >= 5 && elementos[1].equals(elemento.getId())) {
+                    int unidadesRestantes = Integer.parseInt(elementos[4]) - cantidadComprar;
+                    elementos[4] = String.valueOf(unidadesRestantes);
+                    linea = String.join(",", elementos);
+                }
+
+                // Agregar la línea al nuevo contenido
+                nuevoContenido.append(linea).append("\n");
+            }
+
+            scanner.close();
+
+            // Escribir el nuevo contenido en el archivo
+            FileWriter fileWriter = new FileWriter(archivoRuta);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(nuevoContenido.toString());
+            bufferedWriter.close();
+
+        } catch (IOException e) {
+            // Mostrar un mensaje de error en caso de excepción
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("Error al actualizar");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Se produjo un error al actualizar el archivo.");
+            alerta.showAndWait();
+        }
+    }
 }

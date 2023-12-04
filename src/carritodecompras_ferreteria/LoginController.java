@@ -78,7 +78,7 @@ public class LoginController implements Initializable {
 
         Stage newStage = new Stage();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("VentanaPrincipal.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Controller.fxml"));
         Parent root = loader.load();
 
         ControllerController controller = loader.getController();
