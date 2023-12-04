@@ -281,7 +281,7 @@ public class ControllerController implements Initializable {
 
             // Mostrar información de la compra y confirmar el pago
             Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
-            alerta.setHeaderText("¿Deseas comprar el elemento " + fe.getNom()+ "?");
+            alerta.setHeaderText("¿Deseas comprar el elemento " + fe.getNom() + "?");
             alerta.setContentText("El precio del zapato es: " + fe.getPrecio() + "\nEl total a pagar es: " + (fe.getPrecio() * cantidadComprar));
             Optional<ButtonType> result = alerta.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -291,7 +291,7 @@ public class ControllerController implements Initializable {
                 notify.setHeaderText("Cargando información...");
                 notify.setContentText("Pago Realizado Correctamente!");
                 notify.show();
-                historial.add("Compra: " + fe.getNom()+ ", Cantidad: " + cantidadComprar + ", Total: $" + (fe.getPrecio() * cantidadComprar));
+                historial.add("Compra: " + fe.getNom() + ", Cantidad: " + cantidadComprar + ", Total: $" + (fe.getPrecio() * cantidadComprar));
             }
 
             if (fe.getUnidades() <= 0) {
@@ -376,6 +376,7 @@ public class ControllerController implements Initializable {
             }
         }
     }
+
     private void openWindow(String fxmlFileName, Stage stage) throws IOException {
         // Crear un nuevo cargador de FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
@@ -388,5 +389,34 @@ public class ControllerController implements Initializable {
         // Establecer la nueva escena como la escena de la ventana
         stage.setScene(scene);
         stage.show();
+    }
+
+    @FXML
+    private void buscar(ActionEvent event) {
+        TextInputDialog dialogo = new TextInputDialog("");
+        dialogo.setTitle("Buscar producto");
+        dialogo.setHeaderText(null);
+        dialogo.setContentText("Ingrese el nombre del producto a buscar:");
+
+        Optional<String> nombreProducto = dialogo.showAndWait();
+
+        if (nombreProducto.isPresent()) {
+            for (nodo producto : nodos) {
+                if (producto.getNom().equalsIgnoreCase(nombreProducto.get())) {
+                    Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+                    alerta.setTitle("Detalles del producto");
+                    alerta.setHeaderText("Detalles de " + producto.getNom());
+                    alerta.setContentText("Marca: " + producto.getMarca() + "\nNombre: " + producto.getNom()
+                            + "\nPrecio: " + producto.getPrecio() + "\nUnidades disponibles: " + producto.getUnidades());
+                    alerta.showAndWait();
+                    return;
+                }
+            }
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Producto no encontrado");
+            alerta.setHeaderText(null);
+            alerta.setContentText("El producto no se encuentra en la lista.");
+            alerta.showAndWait();
+        }
     }
 }

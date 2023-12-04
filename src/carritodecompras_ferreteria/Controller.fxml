@@ -12,7 +12,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="582.0" prefWidth="1042.0" style="-fx-background-color: F2E9E4;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carritodecompras_ferreteria.ControllerController">
+<AnchorPane id="AnchorPane" prefHeight="582.0" prefWidth="1042.0" style="-fx-background-color: F2E9E4;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carritodecompras_ferreteria.ControllerController">
     <children>
         <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
       <TableView fx:id="tabla" layoutX="14.0" layoutY="209.0" prefHeight="359.0" prefWidth="704.0">
@@ -46,7 +46,10 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#buscar" text="Buscar" />
+                  <MenuItem mnemonicParsing="false" onAction="#cambiar" text="Cambiar Unidades" />
+                  <MenuItem mnemonicParsing="false" onAction="#mayormenor" text="Productos Mayer Y Menor Unidad" />
+              <MenuItem mnemonicParsing="false" onAction="#listado" text="Listado Disponibles" />
             </items>
           </Menu>
         </menus>
