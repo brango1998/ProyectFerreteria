@@ -419,4 +419,42 @@ public class ControllerController implements Initializable {
             alerta.showAndWait();
         }
     }
+
+    @FXML
+    private void cambiar(ActionEvent event) {
+        TextInputDialog dialogo = new TextInputDialog("");
+        dialogo.setTitle("Cambiar unidades");
+        dialogo.setHeaderText(null);
+        dialogo.setContentText("Ingrese el nombre del producto para cambiar unidades:");
+
+        Optional<String> nombreProducto = dialogo.showAndWait();
+
+        if (nombreProducto.isPresent()) {
+            for (nodo producto : nodos) {
+                if (producto.getNom().equalsIgnoreCase(nombreProducto.get())) {
+                    TextInputDialog unidadesDialog = new TextInputDialog("");
+                    unidadesDialog.setTitle("Modificar unidades");
+                    unidadesDialog.setHeaderText(null);
+                    unidadesDialog.setContentText("Unidades actuales: " + producto.getUnidades() + ". Ingrese la nueva cantidad:");
+
+                    Optional<String> unidadesNuevas = unidadesDialog.showAndWait();
+
+                    if (unidadesNuevas.isPresent()) {
+                        int nuevasUnidades = Integer.parseInt(unidadesNuevas.get());
+                        producto.setUnidades(nuevasUnidades);
+
+                        // Actualizar el archivo con las nuevas unidades
+                        guardarActualizacionArchivo(producto);
+                        return;
+                    }
+                }
+            }
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Producto no encontrado");
+            alerta.setHeaderText(null);
+            alerta.setContentText("El producto no se encuentra en la lista.");
+            alerta.showAndWait();
+        }
+    }
+
 }
