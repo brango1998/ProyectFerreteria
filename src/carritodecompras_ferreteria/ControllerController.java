@@ -499,5 +499,45 @@ public class ControllerController implements Initializable {
         alerta.setContentText(productosDisponibles.toString());
         alerta.showAndWait();
     }
+    
+    private void guardarActualizacionArchivo(nodo producto) {
+        String archivoRuta = "src/ferrete/producto.txt";
+
+        try {
+            // Leer el contenido actual del archivo
+            File archivo = new File(archivoRuta);
+            Scanner scanner = new Scanner(archivo);
+            StringBuilder fileContent = new StringBuilder();
+
+            while (scanner.hasNextLine()) {
+                String[] line = scanner.nextLine().split(",");
+                if (line.length >= 5 && line[1].equals(producto.getId())) {
+                    line[4] = String.valueOf(producto.getUnidades());
+                }
+                fileContent.append(String.join(",", line)).append("\n");
+            }
+            scanner.close();
+
+            // Escribir el contenido actualizado en el archivo
+            FileWriter fileWriter = new FileWriter(archivoRuta);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(fileContent.toString());
+            bufferedWriter.close();
+
+            // Mostrar un mensaje de éxito
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Actualización exitosa");
+            alerta.setHeaderText(null);
+            alerta.setContentText("El archivo ha sido actualizado con las nuevas unidades.");
+            alerta.showAndWait();
+        } catch (IOException e) {
+            // Mostrar un mensaje de error en caso de excepción
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("Error al actualizar");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Se produjo un error al actualizar el archivo.");
+            alerta.showAndWait();
+        }
+    }
 
 }
