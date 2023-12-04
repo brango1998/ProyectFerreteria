@@ -456,5 +456,30 @@ public class ControllerController implements Initializable {
             alerta.showAndWait();
         }
     }
+    
+    @FXML
+    private void mayormenor(ActionEvent event) {
+        nodo mayor = null;
+        nodo menor = null;
+
+        for (nodo producto : nodos) {
+            if (mayor == null || producto.getUnidades() > mayor.getUnidades()) {
+                mayor = producto;
+            }
+
+            if (menor == null || producto.getUnidades() < menor.getUnidades()) {
+                menor = producto;
+            }
+        }
+
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Productos con mayor y menor cantidad de unidades");
+        alerta.setHeaderText(null);
+        alerta.setContentText("Producto con mayor cantidad de unidades:\nNombre: " + mayor.getNom()
+                + "\nUnidades: " + mayor.getUnidades()
+                + "\n\nProducto con menor cantidad de unidades:\nNombre: " + menor.getNom()
+                + "\nUnidades: " + menor.getUnidades());
+        alerta.showAndWait();
+    }
 
 }
